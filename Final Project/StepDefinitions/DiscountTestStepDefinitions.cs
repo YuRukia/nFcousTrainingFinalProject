@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using System.Diagnostics;
 using static Final_Project.Utilities.TestBase;
 using Final_Project.POMs;
+using Final_Project.Utilities;
 using OpenQA.Selenium.Support.UI;
 
 namespace Final_Project.StepDefinitions
@@ -18,6 +19,7 @@ namespace Final_Project.StepDefinitions
         CartPOM cartPOM = new CartPOM();
         CheckoutPOM checkoutPOM = new CheckoutPOM();
         OrderRecievedPOM orderRecievedPOM = new OrderRecievedPOM();
+        ExampleCustomer customer = new ExampleCustomer();
 
         string couponCode = "edgewords";
         decimal discountPercentage = 0.15m;
@@ -89,7 +91,7 @@ namespace Final_Project.StepDefinitions
             if (total == (subtotalShipping - discount)) { couponCheck = true; }
             else { couponCheck = false; }
 
-            try { Assert.That(couponCheck, "Coupon discount incorrect"); }
+            try { Assert.That(couponCheck, "Sale cost with coupon should be: " + (subtotalShipping - discount) + "\nBut is: " + total); }
             catch (AssertionException) { }
         }
 
@@ -103,19 +105,19 @@ namespace Final_Project.StepDefinitions
             //Fill Checkout Fields
             waitUntilDisplayed(wait, checkoutPOM.firstName);
             clearElement(driver, checkoutPOM.firstName);
-            sendKeys(driver, checkoutPOM.firstName, "fName");
+            sendKeys(driver, checkoutPOM.firstName, customer.getFirstName());
             clearElement(driver, checkoutPOM.lastName);
-            sendKeys(driver, checkoutPOM.lastName, "lName");
+            sendKeys(driver, checkoutPOM.lastName, customer.getLastName());
             clearElement(driver, checkoutPOM.billingAddress);
-            sendKeys(driver, checkoutPOM.billingAddress, "Example Street");
+            sendKeys(driver, checkoutPOM.billingAddress, customer.getBillingAddress());
             clearElement(driver, checkoutPOM.billingCity);
-            sendKeys(driver, checkoutPOM.billingCity, "Example City");
+            sendKeys(driver, checkoutPOM.billingCity, customer.getBillingCity());
             clearElement(driver, checkoutPOM.billingPostcode);
-            sendKeys(driver, checkoutPOM.billingPostcode, "TN240US");
+            sendKeys(driver, checkoutPOM.billingPostcode, customer.getBillingPostcode());
             clearElement(driver, checkoutPOM.billingPhone);
-            sendKeys(driver, checkoutPOM.billingPhone, "44 113 496 0000");
+            sendKeys(driver, checkoutPOM.billingPhone, customer.getBillingPhone());
             clearElement(driver, checkoutPOM.billingEmail);
-            sendKeys(driver, checkoutPOM.billingEmail, "example@email.co.uk");
+            sendKeys(driver, checkoutPOM.billingEmail, customer.getBillingEmail());
 
             //Check to make sure checkout is successfully exited
             bool orderRecievedLoop = ClickElementValidationLoop(driver, wait, checkoutPOM.placeOrderButton, orderRecievedPOM.url);
